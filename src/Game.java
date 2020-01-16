@@ -22,6 +22,8 @@ public class Game implements Runnable {
 	
 	private String ip;
 	private int port;
+	private String yourName;
+	private String theirName;
 	
 	private Thread thread;
 	private Socket socket;
@@ -36,6 +38,8 @@ public class Game implements Runnable {
 	public Game() {
 		this.ip = "localhost";
 		this.port = 12345;
+		System.out.print("Please enter your name: ");
+		this.yourName = scanner.nextLine();
 		
 		if (!attemptToConnect()) initialiseServer();
 		
@@ -54,17 +58,32 @@ public class Game implements Runnable {
 			if (isHost && !hasAccepted) {
 				listenForServerRequest();
 			}
+			if (isHost && theirName == null) {
+				try{ 
+					dos.writeUTF(yourName);
+					theirName = dis.readUTF();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else if (!isHost && theirName == null) {
+				try{ 
+					theirName = dis.readUTF();
+					dos.writeUTF(yourName);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 			if (isYourTurn) {
-				System.out.println("Type an integer to send to the other user: ");
+				System.out.print(yourName + ": ");
 				try {
-					dos.writeInt(scanner.nextInt());
+					dos.writeUTF(scanner.nextLine());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				isYourTurn = false;
 			} else {
 				try {
-					System.out.println("The other user has sent you the integer: " + dis.readInt());
+					System.out.println(theirName + ": " + dis.readUTF());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
