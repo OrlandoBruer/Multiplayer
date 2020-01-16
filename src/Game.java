@@ -36,7 +36,7 @@ public class Game implements Runnable {
 	 * 
 	 */
 	public Game() {
-		this.ip = "localhost";
+		this.ip = "192.168.0.13";
 		this.port = 12345;
 		System.out.print("Please enter your name: ");
 		this.yourName = scanner.nextLine();
